@@ -11,8 +11,8 @@ Provision a virtual machine with vagrant and puppet to play around with statsd a
 ## Installation
 
 ```
-git clone https://github.com/Jimdo/vagrant-statsd-graphite-puppet.git
-cd vagrant-statsd-graphite-puppet
+git clone https://github.com/johnyzed/graphite-statsd-whisper.git
+cd graphite-statsd-whisper
 vagrant up
 open http://localhost:8080/
 ```
