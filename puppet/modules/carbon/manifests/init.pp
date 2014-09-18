@@ -41,7 +41,8 @@ $build_dir = "/tmp"
 
  exec { "download-graphite-carbon":
    command => "wget -O $carbon_loc $carbon_url",
-   creates => "$carbon_loc"
+   creates => "$carbon_loc",
+   path    => "/usr/bin:/usr/sbin:/bin:/usr/local/bin",
  }
 
  exec { "unpack-carbon":
@@ -49,6 +50,7 @@ $build_dir = "/tmp"
    cwd => $build_dir,
    subscribe => Exec[download-graphite-carbon],
    refreshonly => true,
+   path    => "/usr/bin:/usr/sbin:/bin:/usr/local/bin",
  }
 
  exec { "install-carbon" :
@@ -56,6 +58,7 @@ $build_dir = "/tmp"
    cwd => "$build_dir/carbon-$version",
    require => Exec[unpack-carbon],
    creates => "/opt/graphite/bin/carbon-cache.py",
+   path    => "/usr/bin:/usr/sbin:/bin:/usr/local/bin",
   }
 
   service { "carbon":

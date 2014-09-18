@@ -20,6 +20,7 @@ $statsd_fullpath= "${build_dir}/statsd-${version}"
         command => "wget -O $webapp_loc $webapp_url",
         creates => "$webapp_loc",
         require => File[$build_dir],
+        path    => "/usr/bin:/usr/sbin:/bin:/usr/local/bin",
    }
 
    exec { "unpack-statsd":
@@ -27,6 +28,7 @@ $statsd_fullpath= "${build_dir}/statsd-${version}"
      cwd => $build_dir,
      subscribe=> Exec[download-statsd],
      refreshonly => true,
+     path    => "/usr/bin:/usr/sbin:/bin:/usr/local/bin",
      creates => $statsd_fullpath
    }
 

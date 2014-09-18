@@ -11,7 +11,8 @@ $webapp_loc = "$build_dir/graphite-web.tar.gz"
   exec { "download-graphite-webapp":
         command => "wget -O $webapp_loc $webapp_url",
         creates => "$webapp_loc",
-        timeout => 18000
+        timeout => 18000,
+        path    => "/usr/bin:/usr/sbin:/bin:/usr/local/bin",
    }
 
    exec { "unpack-webapp":
@@ -19,13 +20,15 @@ $webapp_loc = "$build_dir/graphite-web.tar.gz"
      cwd => $build_dir,
      subscribe=> Exec[download-graphite-webapp],
      refreshonly => true,
+     path    => "/usr/bin:/usr/sbin:/bin:/usr/local/bin",
    }
 
    exec { "install-webapp":
      command => "python setup.py install --force",
      cwd => "${build_dir}/graphite-web-${version}",
      require => Exec[unpack-webapp],
-     creates => "/opt/graphite/webapp"
+     creates => "/opt/graphite/webapp",
+     path    => "/usr/bin:/usr/sbin:/bin:/usr/local/bin",
    }
 
   file { [ "/opt/graphite/storage", "/opt/graphite/storage/whisper" ]:
@@ -39,7 +42,8 @@ $webapp_loc = "$build_dir/graphite-web.tar.gz"
      cwd => "/opt/graphite/webapp/graphite",
      creates => "/opt/graphite/storage/graphite.db",
      subscribe => File["/opt/graphite/storage"],
-     require => [ File["/opt/graphite/webapp/graphite/initial_data.json"], Package["python-django-tagging"] ]
+     require => [ File["/opt/graphite/webapp/graphite/initial_data.json"], Package["python-django-tagging"] ],
+     path    => "/usr/bin:/usr/sbin:/bin:/usr/local/bin",
    }
 
   file { "/opt/graphite/webapp/graphite/initial_data.json" :
