@@ -38,35 +38,12 @@ $statsd_fullpath= "${build_dir}/statsd-${version}"
    	source => "puppet:///modules/statsd/localConfig.js"
    }
 
-   file { "/etc/init/statsd.conf":
+   file { "/etc/init.d/statsd":
     require => File['localConfig'],
-   	ensure => file,
-   	content => "
-#!upstart
-description \"Statsd node.js server\"
-author      \"Nicolas\"
-
-start on startup
-stop on shutdown
-
-script
-    export HOME=\"/root\"
-
-    echo $$ > /var/run/statsd.pid
-    exec sudo -u www-data /usr/bin/node ${statsd_fullpath}/stats.js ${statsd_fullpath}/localConfig.js  >> /var/log/statsd.log 2> /var/log/statsd.error.log
-end script
-
-pre-start script
-    # Date format same as (new Date()).toISOString() for consistency
-    echo \"[`date -u +%Y-%m-%dT%T.%3NZ`] (sys) Starting\" >> /var/log/statsd.log
-end script
-
-pre-stop script
-    rm /var/run/statsd.pid
-    echo \"[`date -u +%Y-%m-%dT%T.%3NZ`] (sys) Stopping\" >> /var/log/statsd.log
-end script
-   	",
-   	alias => "statsd_init",
+   	ensure => present,
+   	content => template('statsd/statsd.erb'),
+    alias => "statsd_init",
+    mode => 'o=rwx,ug=rx',
    }
 
    service { "statsd":
